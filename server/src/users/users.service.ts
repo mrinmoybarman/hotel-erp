@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserRegisterRequestDto } from './dto/user-register.req.dto';
 import { User } from './entities/user.entity';
@@ -11,12 +11,15 @@ export class UsersService {
     user.name = register.name;
     user.email = register.email;
     user.password = register.password;
+    if(!(register.confirm===register.password)) 
+    throw new BadRequestException;
+    
     return await user.save();
   }
 
 
   async getUserByEmail(email:string):Promise<User | undefined>{
-    return await User.findOne({where: {email}});
+    return await User.findOne({where: {email}}); 
   }
 
 }

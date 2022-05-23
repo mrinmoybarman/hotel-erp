@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Quiz } from 'src/quiz/entities/quiz.entity';
 import { CreateQuestionDto } from './dto/create-question.dto';
@@ -10,30 +10,66 @@ export class QuestionsService {
   
   constructor(@InjectRepository(QuestionRepository) private questionRepository:QuestionRepository){}
 
-  async create(question: CreateQuestionDto,quiz:Quiz):Promise<Question> {
-    const newQuestion =  await this.questionRepository.save({
-      question:question.question
+  // async create(question: CreateQuestionDto, quiz:Quiz):Promise<Question> {
+  //   const newQuestion =  await this.questionRepository.save({
+  //     question:question.question
+  //   });
+
+  //   quiz.questions = [ ...quiz.questions, newQuestion ];
+  //   await quiz.save();
+
+  //   return newQuestion;
+  // }
+
+  async create(
+    question: CreateQuestionDto,
+    quiz: Quiz,
+  ): Promise<Question> {
+    const newQuestion = await this.questionRepository.save({
+      question: question.question,
     });
 
-    quiz.questions = [ ...quiz.questions, newQuestion ];
+    quiz.questions = [...quiz.questions, newQuestion];
     await quiz.save();
 
     return newQuestion;
   }
 
-  // findAll() {
-  //   return `This action returns all questions`;
-  // }
+  async findAll() {
+    const result = await this.questionRepository.find({relations:['quiz','options']});
+    if(result === undefined){
+      throw new BadRequestException;
+    }
+    return result;
 
-  async findOne(id: number):Promise<Question> {
-    return await this.questionRepository.findOne(id,{relations:['quiz', 'options']});
   }
 
-  // update(id: number, updateQuestionDto: UpdateQuestionDto) {
-  //   return `This action updates a #${id} question`;
-  // }
+  async findOne(id: number):Promise<Question> {
+    const result = await this.questionRepository.findOne(id,{relations:['quiz','options']});
+    if(result === undefined){
+      throw new BadRequestException;
+    }
+    return result;
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} question`;
-  // }
+  }
+
+  async update(id: number, updateQuestion: CreateQuestionDto) {
+    const origin = await this.findOne(id);
+    console.log(origin);
+    const obj = {...updateQuestion,id};
+    const update = await this.questionRepository.save(obj)
+    return update;
+  }
+
+  async remove(id: number) {
+    const data = await this.findOne(id);
+    const ok = await this.questionRepository.delete(id);
+    // console.log(ok.affected);
+    if(ok.affected === 0){
+      throw new BadRequestException;
+    }
+    return {status:'Successfully Deleted !', data};
+  }
+
+
 }

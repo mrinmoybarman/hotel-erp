@@ -1,16 +1,23 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, HttpStatus } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRegisterRequestDto } from './dto/user-register.req.dto';
 import { SETTINGS } from 'src/app.utils';
 import { User } from './entities/user.entity';
+import { ApiBadRequestResponse, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('User')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post('/register')
+  @ApiCreatedResponse({
+    description:'Created user object as response',
+    type:User,
+  })
+  @ApiBadRequestResponse({
+    description:'User Can\'t register',
+  })
   async userRegistration(@Body(SETTINGS.VALIDATION_PIPE) register: UserRegisterRequestDto):Promise<User> {
     return await this.usersService.register(register);
   }

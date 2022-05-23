@@ -25,7 +25,7 @@ export const typeOrmAsyncConfig:TypeOrmModuleAsyncOptions = {
       },
 
       synchronize: false,
-      logging: true,
+      logging: false,
     };
   },
 };
@@ -49,6 +49,6 @@ export const typeOrmConfig:TypeOrmModuleOptions = {
         charset:'utf8mb4_unicode_ci',
       },
 
-      logging: true,
+      logging: false,
 
 }

@@ -47,12 +47,13 @@ export class QuizService {
   }
 
   async remove(id: number) {
+    const data = await this.findOne(id);
     const ok = await this.quizRepository.delete(id);
     console.log(ok.affected);
     if(ok.affected === 0){
       throw new BadRequestException;
     }
-    return ok;
+    return {status:'Successfully Deleted !', data};
   }
 
 }

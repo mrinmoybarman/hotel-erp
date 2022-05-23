@@ -10,29 +10,30 @@ export class QuestionsController {
 
   @Post('')
   @UsePipes(ValidationPipe)
-  async create(@Body() question: CreateQuestionDto):Promise<Question> {
-    const quiz = await this.quizService.findOne(question.quizId); 
-    return await this.questionsService.create(question,quiz);
-    // return this.questionsService.create(question);
+  async create(@Body() question: CreateQuestionDto): Promise<Question> {
+    const quiz = await this.quizService.findOne(question.quizId);
+    return await this.questionsService.create(question, quiz);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.questionsService.findAll();
-  // }
+
+  @Get()
+  async findAll() {
+    return await this.questionsService.findAll();
+  }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: string) {
-    return this.questionsService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: string) :Promise<Question>{
+    return await this.questionsService.findOne(+id);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateQuestionDto: UpdateQuestionDto) {
-  //   return this.questionsService.update(+id, updateQuestionDto);
-  // }
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateQuestion: CreateQuestionDto) {
+    return this.questionsService.update(+id, updateQuestion);
+  }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.questionsService.remove(+id);
-  // }
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.questionsService.remove(+id);
+  }
+
 }

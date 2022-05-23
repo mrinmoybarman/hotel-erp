@@ -23,11 +23,6 @@ export class OptionsController {
     return {question};
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.optionsService.findAll();
-  // }
-
   // @Get(':id')
   // findOne(@Param('id') id: string) {
   //   return this.optionsService.findOne(+id);
